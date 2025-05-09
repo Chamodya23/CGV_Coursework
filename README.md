@@ -20,13 +20,13 @@ _hand-gesture-rps_ is an interactive computer vision application that allows you
 * NumPy for numerical operations
 * Random for computer move generation
 
-📋 Requirements
+📋 **Requirements**
 
 * Webcam or camera device
 * Python 3.8 or higher
 * Libraries: OpenCV, MediaPipe, NumPy
 
-🚀 Installation
+🚀 **Installation**
 
 1. Clone the Repository<br>
 `git clone https://github.com/Chamodya23/CGV_Coursework.git`
@@ -42,7 +42,7 @@ _hand-gesture-rps_ is an interactive computer vision application that allows you
    * Add images for game moves (rock.png, paper.png, scissors.png)
    * For extended mode, add lizard.png and spock.png
 
-🎮 How to Play
+🎮 **How to Play**
 
 1. Start the Game
  `python rps.py`
@@ -64,7 +64,7 @@ _hand-gesture-rps_ is an interactive computer vision application that allows you
 * The system will detect your gesture and determine the winner
 * Results are displayed for a few seconds before returning to the waiting state
 
-🎲 Extended Mode
+🎲 **Extended Mode**
 In extended mode, you can play Rock-Paper-Scissors-Lizard-Spock with these additional gestures:
 
 * Spock: Extend your thumb and pinky (Star Trek salute)
@@ -78,7 +78,7 @@ Remember the rules:
 * Lizard eats Paper, Paper disproves Spock
 * Spock vaporizes Rock, Rock crushes Scissors
 
-🖼️ Display Interface
+🖼️ **Display Interface**
 The interface is divided into four quadrants:
 
 1. *Top-Left*: Live camera feed
@@ -86,9 +86,11 @@ The interface is divided into four quadrants:
 3. *Bottom-Left*: Hand landmark visualization
 4. *Bottom-Right*: Game state information (countdown, results, score)
 
-🛠️ Customization
+🛠️ **Customization**
 
 * Adjust the `threshold_value` using `+/-` keys for better hand detection in different lighting
 * Add your own gesture images in the `images` folder to customize the look
 * Modify the `RPSGame` class initialization parameters to change resolution or camera source
+
+#Enjoy playing Rock-Paper-Scissors with gesture recognition! 🖐️✌️👊
 
