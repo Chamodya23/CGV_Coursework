@@ -109,7 +109,7 @@ class RPSGame:
         self.show_edges = False
         self.show_contours = False
 
- def extract_hand_region(self, frame, hand_landmarks):
+    def extract_hand_region(self, frame, hand_landmarks):
         """Extract the hand region from the frame using landmarks"""
         if hand_landmarks is None:
             return np.zeros_like(frame)
@@ -163,7 +163,7 @@ class RPSGame:
             
         return np.zeros_like(frame)
 
- def create_thresholded_hand(self, frame, hand_landmarks):
+    def create_thresholded_hand(self, frame, hand_landmarks):
         """Create a thresholded image of the hand on a black background"""
         if hand_landmarks is None:
             return np.zeros_like(frame)
@@ -192,7 +192,7 @@ class RPSGame:
         
         return thresh_with_landmarks
 
-def create_processing_visualization(self, frame):
+    def create_processing_visualization(self, frame):
         h, w = frame.shape[:2]
         # Create a 2x2 grid for visualization
         grid = np.zeros((h, w*2, 3), dtype=np.uint8)
@@ -260,8 +260,8 @@ def create_processing_visualization(self, frame):
         
         return grid
     
-     def detect_gesture(self, hand_landmarks):
-            """Detect the gesture based on MediaPipe hand landmarks"""
+    def detect_gesture(self, hand_landmarks):
+        """Detect the gesture based on MediaPipe hand landmarks"""
         # Get tip and pip landmarks for each finger
         finger_tips = [
             hand_landmarks.landmark[self.mp_hands.HandLandmark.THUMB_TIP],
@@ -270,7 +270,7 @@ def create_processing_visualization(self, frame):
             hand_landmarks.landmark[self.mp_hands.HandLandmark.RING_FINGER_TIP],
             hand_landmarks.landmark[self.mp_hands.HandLandmark.PINKY_TIP]
         ]
-        
+            
         finger_pips = [
             hand_landmarks.landmark[self.mp_hands.HandLandmark.THUMB_IP],
             hand_landmarks.landmark[self.mp_hands.HandLandmark.INDEX_FINGER_PIP],
@@ -278,7 +278,7 @@ def create_processing_visualization(self, frame):
             hand_landmarks.landmark[self.mp_hands.HandLandmark.RING_FINGER_PIP],
             hand_landmarks.landmark[self.mp_hands.HandLandmark.PINKY_PIP]
         ]
-        
+            
         # Check if fingers are extended
         fingers_extended = []
         for tip, pip in zip(finger_tips, finger_pips):
@@ -286,18 +286,18 @@ def create_processing_visualization(self, frame):
                 fingers_extended.append(True)
             else:
                 fingers_extended.append(False)
-        
+                
         # Special case for thumb - check if thumb tip is to the right/left of the thumb ip
         wrist = hand_landmarks.landmark[self.mp_hands.HandLandmark.WRIST]
         thumb_tip = finger_tips[0]
         thumb_ip = finger_pips[0]
-        
+                        
         # Determine if the hand is left or right
         if wrist.x < thumb_tip.x:  # Right hand
             fingers_extended[0] = thumb_tip.x > thumb_ip.x
         else:  # Left hand
             fingers_extended[0] = thumb_tip.x < thumb_ip.x
-        
+                        
         # Detect basic gestures
         if not any(fingers_extended):
             return "rock"
@@ -311,9 +311,9 @@ def create_processing_visualization(self, frame):
                 return "spock"
             elif fingers_extended[0] and fingers_extended[1] and not fingers_extended[2] and not fingers_extended[3] and not fingers_extended[4]:
                 return "lizard"
-        
+                        
         return None
-    
+                
     def determine_winner(self, user_choice, computer_choice):
         """Determine the winner based on Rock-Paper-Scissors(-Lizard-Spock) rules"""
         if user_choice == computer_choice:
@@ -322,8 +322,8 @@ def create_processing_visualization(self, frame):
         # Rules for standard Rock-Paper-Scissors
         if not self.extended_mode:
             if (user_choice == "rock" and computer_choice == "scissors") or \
-               (user_choice == "paper" and computer_choice == "rock") or \
-               (user_choice == "scissors" and computer_choice == "paper"):
+            (user_choice == "paper" and computer_choice == "rock") or \
+            (user_choice == "scissors" and computer_choice == "paper"):
                 return "You win!"
             else:
                 return "Computer wins!"
@@ -339,20 +339,20 @@ def create_processing_visualization(self, frame):
                 "lizard": ["spock", "paper"],
                 "spock": ["scissors", "rock"]
             }
-            
+                    
             if computer_choice in win_conditions.get(user_choice, []):
                 return "You win!"
             else:
                 return "Computer wins!"
-            
-            def overlay_computer_choice(self, display, computer_move):
+                    
+    def overlay_computer_choice(self, display, computer_move):
         """Overlay computer's choice on the game display"""
         
         # Make sure computer_move is valid
         if not computer_move or computer_move not in self.extended_choices:
             print(f"Invalid computer move: {computer_move}")
             return display
-        
+                
         # Get the appropriate image based on computer's move
         try:
             if computer_move == "rock":
@@ -370,11 +370,11 @@ def create_processing_visualization(self, frame):
                     ratio = img.shape[1] / img.shape[0]
                     target_height = int(target_width / ratio)
                     img_resized = cv2.resize(img, (target_width, target_height))
-                    
+                            
                     # Continue with the overlay logic below
                     img_channels = len(img_resized.shape)
                     has_alpha = False
-                    
+                            
                     if img_channels == 3:
                         # RGB image, no alpha channel
                         pass
@@ -385,34 +385,34 @@ def create_processing_visualization(self, frame):
                         # Grayscale image or other format
                         # Convert to RGB to ensure compatibility
                         img_resized = cv2.cvtColor(img_resized, cv2.COLOR_GRAY2BGR)
-                    
+                            
                     # Position image in the top-right corner with some padding
                     x_offset = display.shape[1] - target_width - 20
                     y_offset = 20
-                    
+                            
                     # Ensure we don't go out of bounds
                     if y_offset + target_height > display.shape[0] or x_offset + target_width > display.shape[1]:
                         target_height = min(target_height, display.shape[0] - y_offset)
                         target_width = min(target_width, display.shape[1] - x_offset)
                         img_resized = cv2.resize(img, (target_width, target_height))
-                    
+                            
                     # Create a region of interest
-                    roi = display[y_offset:y_offset+target_height, x_offset:x_offset+target_width]
-                    
+                        roi = display[y_offset:y_offset+target_height, x_offset:x_offset+target_width]
+                            
                     # Overlay the image properly handling alpha if present
-                    if has_alpha:
-                        # Extract alpha channel
-                        alpha = img_resized[:, :, 3] / 255.0
-                        
-                        # Extract RGB channels
-                        for c in range(3):
-                            roi[:, :, c] = (1 - alpha) * roi[:, :, c] + alpha * img_resized[:, :, c]
-                    else:
-                        # Simple overlay for images without alpha
-                        roi[:] = img_resized[:, :, :3]
+                        if has_alpha:
+                            # Extract alpha channel
+                            alpha = img_resized[:, :, 3] / 255.0
+                                
+                            # Extract RGB channels
+                            for c in range(3):
+                                roi[:, :, c] = (1 - alpha) * roi[:, :, c] + alpha * img_resized[:, :, c]
+                        else:
+                            # Simple overlay for images without alpha
+                            roi[:] = img_resized[:, :, :3]
+                            
+                        return display
                     
-                    return display
-            
             # Check if image path exists for basic gestures
             if not os.path.exists(img_path):
                 print(f"Error: Image file not found at {img_path}")
@@ -421,7 +421,7 @@ def create_processing_visualization(self, frame):
                         (display.shape[1] - 200, 50), 
                         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
                 return display
-                
+                        
             # Load and resize the image
             img = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
             if img is None:
@@ -431,18 +431,18 @@ def create_processing_visualization(self, frame):
                         (display.shape[1] - 200, 50), 
                         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
                 return display
-                
+                        
             # Calculate target size (e.g., 30% of the display width)
             target_width = int(display.shape[1] * 0.3)
             ratio = img.shape[1] / img.shape[0]
             target_height = int(target_width / ratio)
-            
+                    
             img_resized = cv2.resize(img, (target_width, target_height))
-            
+                    
             # Check image dimensions and handle various image formats
             img_channels = len(img_resized.shape)
             has_alpha = False
-            
+                    
             if img_channels == 3:
                 # RGB image, no alpha channel
                 pass
@@ -453,37 +453,201 @@ def create_processing_visualization(self, frame):
                 # Grayscale image or other format
                 # Convert to RGB to ensure compatibility
                 img_resized = cv2.cvtColor(img_resized, cv2.COLOR_GRAY2BGR)
-            
+                    
             # Position image in the top-right corner with some padding
             x_offset = display.shape[1] - target_width - 20
             y_offset = 20
-            
+                    
             # Ensure we don't go out of bounds
             if y_offset + target_height > display.shape[0] or x_offset + target_width > display.shape[1]:
                 target_height = min(target_height, display.shape[0] - y_offset)
                 target_width = min(target_width, display.shape[1] - x_offset)
                 img_resized = cv2.resize(img_resized, (target_width, target_height))
-            
-            # Create a region of interest
-            roi = display[y_offset:y_offset+target_height, x_offset:x_offset+target_width]
-            
-            # Overlay the image properly handling alpha if present
-            if has_alpha:
-                # Extract alpha channel
-                alpha = img_resized[:, :, 3] / 255.0
-                
-                # Extract RGB channels
-                for c in range(3):
-                    roi[:, :, c] = (1 - alpha) * roi[:, :, c] + alpha * img_resized[:, :, c]
-            else:
-                # Simple overlay for images without alpha
-                roi[:] = img_resized[:, :, :3]
-                
-            return display
+                    
+                # Create a region of interest
+                roi = display[y_offset:y_offset+target_height, x_offset:x_offset+target_width]
+                    
+                # Overlay the image properly handling alpha if present
+                if has_alpha:
+                    # Extract alpha channel
+                    alpha = img_resized[:, :, 3] / 255.0
+                        
+                    # Extract RGB channels
+                    for c in range(3):
+                        roi[:, :, c] = (1 - alpha) * roi[:, :, c] + alpha * img_resized[:, :, c]
+                else:
+                    # Simple overlay for images without alpha
+                    roi[:] = img_resized[:, :, :3]
+                        
+                return display
         except Exception as e:
-            print(f"Error overlaying computer choice: {e}")
-            # Draw text instead of image as fallback
-            cv2.putText(display, f"Computer: {computer_move.upper()}", 
-                    (display.shape[1] - 200, 50), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
-            return display  # Return original display on error
+                    print(f"Error overlaying computer choice: {e}")
+                    # Draw text instead of image as fallback
+                    cv2.putText(display, f"Computer: {computer_move.upper()}", 
+                            (display.shape[1] - 200, 50), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+                    return display  # Return original display on error
+        
+    def run(self):
+        """Run the Rock-Paper-Scissors game"""
+        # Initialize webcam
+        cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            print("Error: Could not open webcam")
+            return
+                
+        # Main loop
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                print("Error: Failed to capture image")
+                break
+                        
+            # Flip the frame horizontally for a selfie-view
+            frame = cv2.flip(frame, 1)
+                    
+            # Convert the BGR image to RGB
+            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    
+            # Process the image to detect hands
+            results = self.hands.process(rgb_frame)
+                    
+            # Update hand_landmarks only once
+            self.hand_landmarks = None
+            if results.multi_hand_landmarks:
+                # Use only the first detected hand
+                self.hand_landmarks = results.multi_hand_landmarks[0]
+                    
+            # Game logic
+            current_time = time.time()
+                    
+            # Handle game state transitions
+            if self.state == GameState.COUNTDOWN and current_time >= self.countdown_end:
+                self.state = GameState.CAPTURE
+                        
+                # Capture user's gesture
+                if self.hand_landmarks:
+                    self.player_move = self.detect_gesture(self.hand_landmarks)
+                else:
+                    self.player_move = None
+                        
+                # Computer makes a choice
+                if self.extended_mode:
+                    self.computer_move = random.choice(self.extended_choices)
+                else:
+                    self.computer_move = random.choice(self.choices)
+                        
+                # Determine winner
+                if self.player_move:
+                    self.result = self.determine_winner(self.player_move, self.computer_move)
+                            
+                    # Update stats
+                    self.stats["total"] += 1
+                    if "win" in self.result.lower() and "computer" not in self.result.lower():
+                        self.stats["wins"] += 1
+                        self.player_score += 1
+                    elif "tie" in self.result.lower():
+                        self.stats["ties"] += 1
+                    else:
+                        self.stats["losses"] += 1
+                        self.computer_score += 1
+                else:
+                    self.result = "No gesture detected!"
+                        
+                # Move to result state
+                self.state = GameState.RESULT
+                self.result_display_end = current_time + 3  # Show result for 3 seconds
+                    
+            elif self.state == GameState.RESULT and current_time >= self.result_display_end:
+                # Reset to waiting state after showing result
+                self.state = GameState.WAITING
+                    
+            # Create visualization grid - this will handle drawing the landmarks in appropriate places
+            display = self.create_processing_visualization(frame)
+                    
+            # Detect gesture only once and use it in the appropriate places
+            detected_gesture = None
+            if self.hand_landmarks:
+                detected_gesture = self.detect_gesture(self.hand_landmarks)
+                    
+            # Add gesture text to main display area only (not in the visualization grid)
+            if detected_gesture:
+                cv2.putText(display, f"Detected: {detected_gesture.upper()}", 
+                            (10, 30), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+                    
+            # If in result state, overlay computer's choice
+            if self.state == GameState.RESULT and self.computer_move:
+                display = self.overlay_computer_choice(display, self.computer_move)
+                    
+            # Display instructions and stats
+            h, w = display.shape[:2]
+            cv2.rectangle(display, (0, h-100), (w, h), (0, 0, 0), -1)
+            cv2.putText(display, f"Press 'SPACE' to play | 'ESC' to quit | 'e' for extended mode: {'ON' if self.extended_mode else 'OFF'} | 't' to toggle thresholding", 
+                        (10, h-70), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
+            cv2.putText(display, f"Stats: Wins: {self.stats['wins']} | Losses: {self.stats['losses']} | Ties: {self.stats['ties']} | Total: {self.stats['total']}", 
+                        (10, h-40), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
+            cv2.putText(display, f"Threshold: {self.threshold_value} (Use '+'/'-' to adjust)", 
+                        (10, h-10), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
+                    
+            # Display the frame
+            cv2.imshow('Rock-Paper-Scissors Game', display)
+                    
+            # Check for key presses
+            key = cv2.waitKey(1) & 0xFF
+                    
+            # Quit on ESC
+            if key == 27:  # ESC key
+                break
+                    
+            # Start game on SPACE
+            elif key == 32:  # SPACE key
+                if self.state == GameState.WAITING:
+                    self.state = GameState.COUNTDOWN
+                    self.countdown_end = current_time + 3  # 3 second countdown
+                    
+            # Toggle extended mode on 'e'
+            elif key == ord('e'):
+                self.extended_mode = not self.extended_mode
+                print(f"Extended mode: {'ON' if self.extended_mode else 'OFF'}")
+                    
+            # Toggle thresholding on 't'
+            elif key == ord('t'):
+                self.show_threshold = not self.show_threshold
+                print(f"Thresholding: {'ON' if self.show_threshold else 'OFF'}")
+                    
+            # Adjust threshold value
+            elif key == ord('+') or key == ord('='):
+                self.threshold_value = min(255, self.threshold_value + 5)
+                print(f"Threshold value: {self.threshold_value}")
+            elif key == ord('-') or key == ord('_'):
+                self.threshold_value = max(0, self.threshold_value - 5)
+                print(f"Threshold value: {self.threshold_value}")
+                    
+            # Take screenshot on 's'
+            elif key == ord('s'):
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                cv2.imwrite(f"rps_screenshot_{timestamp}.png", display)
+                print(f"Screenshot saved as rps_screenshot_{timestamp}.png")
+                
+        # Release resources
+        cap.release()
+        cv2.destroyAllWindows()
+        self.hands.close()
+
+if __name__ == "__main__":
+    print("Starting Rock-Paper-Scissors Game...")
+    print("Instructions:")
+    print("1. Press SPACE to start a game")
+    print("2. Show your hand gesture when the countdown ends")
+    print("3. Press 'e' to toggle extended mode (Rock-Paper-Scissors-Lizard-Spock)")
+    print("4. Press 't' to toggle thresholded hand display")
+    print("5. Press '+'/'-' to adjust threshold value")
+    print("6. Press 's' to take a screenshot")
+    print("7. Press ESC to quit")
+    
+    game = RPSGame()
+    game.run()
