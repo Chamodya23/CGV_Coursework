@@ -313,3 +313,34 @@ def create_processing_visualization(self, frame):
                 return "lizard"
         
         return None
+    
+    def determine_winner(self, user_choice, computer_choice):
+        """Determine the winner based on Rock-Paper-Scissors(-Lizard-Spock) rules"""
+        if user_choice == computer_choice:
+            return "Tie!"
+        
+        # Rules for standard Rock-Paper-Scissors
+        if not self.extended_mode:
+            if (user_choice == "rock" and computer_choice == "scissors") or \
+               (user_choice == "paper" and computer_choice == "rock") or \
+               (user_choice == "scissors" and computer_choice == "paper"):
+                return "You win!"
+            else:
+                return "Computer wins!"
+        else:
+            # Rules for Rock-Paper-Scissors-Lizard-Spock
+            # Scissors cuts Paper, Paper covers Rock, Rock crushes Lizard, 
+            # Lizard poisons Spock, Spock smashes Scissors, Scissors decapitates Lizard, 
+            # Lizard eats Paper, Paper disproves Spock, Spock vaporizes Rock, Rock crushes Scissors
+            win_conditions = {
+                "scissors": ["paper", "lizard"],
+                "paper": ["rock", "spock"],
+                "rock": ["lizard", "scissors"],
+                "lizard": ["spock", "paper"],
+                "spock": ["scissors", "rock"]
+            }
+            
+            if computer_choice in win_conditions.get(user_choice, []):
+                return "You win!"
+            else:
+                return "Computer wins!"
