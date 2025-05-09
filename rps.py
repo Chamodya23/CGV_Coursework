@@ -108,3 +108,57 @@ class RPSGame:
         self.show_grayscale = False
         self.show_edges = False
         self.show_contours = False
+
+ def extract_hand_region(self, frame, hand_landmarks):
+        """Extract the hand region from the frame using landmarks"""
+        if hand_landmarks is None:
+            return np.zeros_like(frame)
+            
+        h, w = frame.shape[:2]
+        
+        # Get hand bounding box
+        x_min, y_min = w, h
+        x_max, y_max = 0, 0
+        
+        for landmark in hand_landmarks.landmark:
+            x, y = int(landmark.x * w), int(landmark.y * h)
+            x_min = min(x_min, x)
+            y_min = min(y_min, y)
+            x_max = max(x_max, x)
+            y_max = max(y_max, y)
+        
+        # Add padding to the bounding box
+        padding = 30
+        x_min = max(0, x_min - padding)
+        y_min = max(0, y_min - padding)
+        x_max = min(w, x_max + padding)
+        y_max = min(h, y_max + padding)
+        
+        # Create a mask for the hand region
+        mask = np.zeros((h, w), dtype=np.uint8)
+        
+        # Create convex hull of landmarks for the hand mask
+        points = []
+        for landmark in hand_landmarks.landmark:
+            x, y = int(landmark.x * w), int(landmark.y * h)
+            points.append([x, y])
+            
+        if len(points) > 0:
+            points_array = np.array(points)
+            convex_hull = cv2.convexHull(points_array)
+            cv2.drawContours(mask, [convex_hull], -1, 255, -1)
+            
+            # Apply morphological operations to smooth the mask
+            kernel = np.ones((5, 5), np.uint8)
+            mask = cv2.dilate(mask, kernel, iterations=2)
+            
+            # Create a black background image
+            hand_image = np.zeros_like(frame)
+            
+            # Copy only the hand portion from the original frame
+            for c in range(3):  # For each color channel
+                hand_image[:, :, c] = cv2.bitwise_and(frame[:, :, c], mask)
+                
+            return hand_image
+            
+        return np.zeros_like(frame)
