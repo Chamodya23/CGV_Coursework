@@ -191,3 +191,71 @@ class RPSGame:
         )
         
         return thresh_with_landmarks
+
+def create_processing_visualization(self, frame):
+        h, w = frame.shape[:2]
+        # Create a 2x2 grid for visualization
+        grid = np.zeros((h, w*2, 3), dtype=np.uint8)
+
+        # Original frame in top-left (without gesture label, which will be added separately)
+        grid[:h//2, :w] = frame[:h//2]
+
+        # Thresholded hand in top-right if hand is detected
+        if self.hand_landmarks and self.show_threshold:
+            thresh_hand = self.create_thresholded_hand(frame, self.hand_landmarks)
+            grid[:h//2, w:w*2] = cv2.resize(thresh_hand, (w, h//2))
+        else:
+            # Convert to grayscale for processing visualization
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            gray_bgr = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+            grid[:h//2, w:w*2] = cv2.resize(gray_bgr, (w, h//2))
+
+        # Hand landmarks visualization in bottom-left (only draw once)
+        hand_vis = frame.copy()
+        if self.hand_landmarks:
+            self.mp_drawing.draw_landmarks(
+                hand_vis, 
+                self.hand_landmarks, 
+                self.mp_hands.HAND_CONNECTIONS)
+        grid[h//2:, :w] = hand_vis[h//2:]
+
+        # Game state in bottom-right
+        info_display = np.zeros((h//2, w, 3), dtype=np.uint8)
+
+        # Show countdown or result
+        if self.state == GameState.COUNTDOWN:
+            time_left = int(self.countdown_end - time.time()) + 1
+            if time_left > 0:
+                cv2.putText(info_display, str(time_left), (w//2-50, h//4+20), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 4, (255, 255, 255), 5)
+        elif self.state == GameState.RESULT:
+            # Show player's move
+            player_move_text = f"Your move: {self.player_move}"
+            cv2.putText(info_display, player_move_text, (20, 50), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+            
+            # Show computer's move
+            computer_move_text = f"Computer: {self.computer_move}"
+            cv2.putText(info_display, computer_move_text, (20, 100), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+            
+            # Show game result
+            result_color = (0, 255, 0) if self.result == "You win!" else \
+                        (0, 0, 255) if self.result == "Computer wins!" else (255, 255, 255)
+            cv2.putText(info_display, self.result, (20, 150), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, result_color, 2)
+            
+            # Show score
+            score_text = f"Score: You {self.player_score} - {self.computer_score} Computer"
+            cv2.putText(info_display, score_text, (20, 200), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+        
+        # Show mode
+        mode_text = "Mode: " + ("Standard" if not self.extended_mode else "Extended (Rock-Paper-Scissors-Lizard-Spock)")
+        cv2.putText(info_display, mode_text, (20, h//4-30), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+        
+        # Add the status display to bottom-right
+        grid[h//2:, w:w*2] = info_display
+        
+        return grid
