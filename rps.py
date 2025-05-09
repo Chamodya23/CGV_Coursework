@@ -344,3 +344,146 @@ def create_processing_visualization(self, frame):
                 return "You win!"
             else:
                 return "Computer wins!"
+            
+            def overlay_computer_choice(self, display, computer_move):
+        """Overlay computer's choice on the game display"""
+        
+        # Make sure computer_move is valid
+        if not computer_move or computer_move not in self.extended_choices:
+            print(f"Invalid computer move: {computer_move}")
+            return display
+        
+        # Get the appropriate image based on computer's move
+        try:
+            if computer_move == "rock":
+                img_path = self.rock_img_path
+            elif computer_move == "paper":
+                img_path = self.paper_img_path
+            elif computer_move == "scissors":
+                img_path = self.scissors_img_path
+            elif computer_move in self.gesture_images:
+                # Use the preloaded images for extended mode gestures
+                img = self.gesture_images[computer_move]
+                if img is not None:
+                    # Skip to the resizing part if we have a valid preloaded image
+                    target_width = int(display.shape[1] * 0.3)
+                    ratio = img.shape[1] / img.shape[0]
+                    target_height = int(target_width / ratio)
+                    img_resized = cv2.resize(img, (target_width, target_height))
+                    
+                    # Continue with the overlay logic below
+                    img_channels = len(img_resized.shape)
+                    has_alpha = False
+                    
+                    if img_channels == 3:
+                        # RGB image, no alpha channel
+                        pass
+                    elif img_channels > 3 and img_resized.shape[2] == 4:
+                        # Image with alpha channel
+                        has_alpha = True
+                    else:
+                        # Grayscale image or other format
+                        # Convert to RGB to ensure compatibility
+                        img_resized = cv2.cvtColor(img_resized, cv2.COLOR_GRAY2BGR)
+                    
+                    # Position image in the top-right corner with some padding
+                    x_offset = display.shape[1] - target_width - 20
+                    y_offset = 20
+                    
+                    # Ensure we don't go out of bounds
+                    if y_offset + target_height > display.shape[0] or x_offset + target_width > display.shape[1]:
+                        target_height = min(target_height, display.shape[0] - y_offset)
+                        target_width = min(target_width, display.shape[1] - x_offset)
+                        img_resized = cv2.resize(img, (target_width, target_height))
+                    
+                    # Create a region of interest
+                    roi = display[y_offset:y_offset+target_height, x_offset:x_offset+target_width]
+                    
+                    # Overlay the image properly handling alpha if present
+                    if has_alpha:
+                        # Extract alpha channel
+                        alpha = img_resized[:, :, 3] / 255.0
+                        
+                        # Extract RGB channels
+                        for c in range(3):
+                            roi[:, :, c] = (1 - alpha) * roi[:, :, c] + alpha * img_resized[:, :, c]
+                    else:
+                        # Simple overlay for images without alpha
+                        roi[:] = img_resized[:, :, :3]
+                    
+                    return display
+            
+            # Check if image path exists for basic gestures
+            if not os.path.exists(img_path):
+                print(f"Error: Image file not found at {img_path}")
+                # Draw text instead of image as fallback
+                cv2.putText(display, f"Computer: {computer_move.upper()}", 
+                        (display.shape[1] - 200, 50), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+                return display
+                
+            # Load and resize the image
+            img = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
+            if img is None:
+                print(f"Error: Could not load image at {img_path}")
+                # Draw text instead of image as fallback
+                cv2.putText(display, f"Computer: {computer_move.upper()}", 
+                        (display.shape[1] - 200, 50), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+                return display
+                
+            # Calculate target size (e.g., 30% of the display width)
+            target_width = int(display.shape[1] * 0.3)
+            ratio = img.shape[1] / img.shape[0]
+            target_height = int(target_width / ratio)
+            
+            img_resized = cv2.resize(img, (target_width, target_height))
+            
+            # Check image dimensions and handle various image formats
+            img_channels = len(img_resized.shape)
+            has_alpha = False
+            
+            if img_channels == 3:
+                # RGB image, no alpha channel
+                pass
+            elif img_channels > 3 and img_resized.shape[2] == 4:
+                # Image with alpha channel
+                has_alpha = True
+            else:
+                # Grayscale image or other format
+                # Convert to RGB to ensure compatibility
+                img_resized = cv2.cvtColor(img_resized, cv2.COLOR_GRAY2BGR)
+            
+            # Position image in the top-right corner with some padding
+            x_offset = display.shape[1] - target_width - 20
+            y_offset = 20
+            
+            # Ensure we don't go out of bounds
+            if y_offset + target_height > display.shape[0] or x_offset + target_width > display.shape[1]:
+                target_height = min(target_height, display.shape[0] - y_offset)
+                target_width = min(target_width, display.shape[1] - x_offset)
+                img_resized = cv2.resize(img_resized, (target_width, target_height))
+            
+            # Create a region of interest
+            roi = display[y_offset:y_offset+target_height, x_offset:x_offset+target_width]
+            
+            # Overlay the image properly handling alpha if present
+            if has_alpha:
+                # Extract alpha channel
+                alpha = img_resized[:, :, 3] / 255.0
+                
+                # Extract RGB channels
+                for c in range(3):
+                    roi[:, :, c] = (1 - alpha) * roi[:, :, c] + alpha * img_resized[:, :, c]
+            else:
+                # Simple overlay for images without alpha
+                roi[:] = img_resized[:, :, :3]
+                
+            return display
+        except Exception as e:
+            print(f"Error overlaying computer choice: {e}")
+            # Draw text instead of image as fallback
+            cv2.putText(display, f"Computer: {computer_move.upper()}", 
+                    (display.shape[1] - 200, 50), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+            return display  # Return original display on error
