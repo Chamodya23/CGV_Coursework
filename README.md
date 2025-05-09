@@ -78,3 +78,17 @@ Remember the rules:
 * Lizard eats Paper, Paper disproves Spock
 * Spock vaporizes Rock, Rock crushes Scissors
 
+🖼️ Display Interface
+The interface is divided into four quadrants:
+
+1. *Top-Left*: Live camera feed
+2. *Top-Right*: Thresholded hand image (when enabled)
+3. *Bottom-Left*: Hand landmark visualization
+4. *Bottom-Right*: Game state information (countdown, results, score)
+
+🛠️ Customization
+
+* Adjust the `threshold_value` using `+/-` keys for better hand detection in different lighting
+* Add your own gesture images in the `images` folder to customize the look
+* Modify the `RPSGame` class initialization parameters to change resolution or camera source
+
