@@ -259,3 +259,57 @@ def create_processing_visualization(self, frame):
         grid[h//2:, w:w*2] = info_display
         
         return grid
+    
+     def detect_gesture(self, hand_landmarks):
+            """Detect the gesture based on MediaPipe hand landmarks"""
+        # Get tip and pip landmarks for each finger
+        finger_tips = [
+            hand_landmarks.landmark[self.mp_hands.HandLandmark.THUMB_TIP],
+            hand_landmarks.landmark[self.mp_hands.HandLandmark.INDEX_FINGER_TIP],
+            hand_landmarks.landmark[self.mp_hands.HandLandmark.MIDDLE_FINGER_TIP],
+            hand_landmarks.landmark[self.mp_hands.HandLandmark.RING_FINGER_TIP],
+            hand_landmarks.landmark[self.mp_hands.HandLandmark.PINKY_TIP]
+        ]
+        
+        finger_pips = [
+            hand_landmarks.landmark[self.mp_hands.HandLandmark.THUMB_IP],
+            hand_landmarks.landmark[self.mp_hands.HandLandmark.INDEX_FINGER_PIP],
+            hand_landmarks.landmark[self.mp_hands.HandLandmark.MIDDLE_FINGER_PIP],
+            hand_landmarks.landmark[self.mp_hands.HandLandmark.RING_FINGER_PIP],
+            hand_landmarks.landmark[self.mp_hands.HandLandmark.PINKY_PIP]
+        ]
+        
+        # Check if fingers are extended
+        fingers_extended = []
+        for tip, pip in zip(finger_tips, finger_pips):
+            if tip.y < pip.y:  # If tip is above pip (y increases downward)
+                fingers_extended.append(True)
+            else:
+                fingers_extended.append(False)
+        
+        # Special case for thumb - check if thumb tip is to the right/left of the thumb ip
+        wrist = hand_landmarks.landmark[self.mp_hands.HandLandmark.WRIST]
+        thumb_tip = finger_tips[0]
+        thumb_ip = finger_pips[0]
+        
+        # Determine if the hand is left or right
+        if wrist.x < thumb_tip.x:  # Right hand
+            fingers_extended[0] = thumb_tip.x > thumb_ip.x
+        else:  # Left hand
+            fingers_extended[0] = thumb_tip.x < thumb_ip.x
+        
+        # Detect basic gestures
+        if not any(fingers_extended):
+            return "rock"
+        elif all(fingers_extended):
+            return "paper"
+        elif fingers_extended[1] and fingers_extended[2] and not fingers_extended[0] and not fingers_extended[3] and not fingers_extended[4]:
+            return "scissors"
+        elif self.extended_mode:
+            # For extended mode (Rock, Paper, Scissors, Lizard, Spock)
+            if fingers_extended[0] and fingers_extended[4] and not fingers_extended[1] and not fingers_extended[2] and not fingers_extended[3]:
+                return "spock"
+            elif fingers_extended[0] and fingers_extended[1] and not fingers_extended[2] and not fingers_extended[3] and not fingers_extended[4]:
+                return "lizard"
+        
+        return None
