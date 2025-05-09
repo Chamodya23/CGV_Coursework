@@ -1,5 +1,6 @@
 # Hand Gesture RPS Game 👋🎮
 _hand-gesture-rps_ is an interactive computer vision application that allows you to play Rock-Paper-Scissors against your computer using real hand gestures. Powered by MediaPipe and OpenCV, this game recognizes your hand gestures in real-time through your webcam, determines your move, and competes against a randomized computer opponent.
+
 ✨ Features
 
 * Real-time hand gesture recognition using MediaPipe's hand tracking
