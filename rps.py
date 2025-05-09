@@ -162,3 +162,32 @@ class RPSGame:
             return hand_image
             
         return np.zeros_like(frame)
+
+ def create_thresholded_hand(self, frame, hand_landmarks):
+        """Create a thresholded image of the hand on a black background"""
+        if hand_landmarks is None:
+            return np.zeros_like(frame)
+        
+        # Extract hand region
+        hand_image = self.extract_hand_region(frame, hand_landmarks)
+        
+        # Convert to grayscale
+        gray = cv2.cvtColor(hand_image, cv2.COLOR_BGR2GRAY)
+        
+        # Apply binary threshold
+        _, thresh = cv2.threshold(gray, self.threshold_value, 255, cv2.THRESH_BINARY)
+        
+        # Convert back to BGR for display
+        thresh_colored = cv2.cvtColor(thresh, cv2.COLOR_GRAY2BGR)
+        
+        # Draw landmarks on the thresholded image for better visualization
+        thresh_with_landmarks = thresh_colored.copy()
+        self.mp_drawing.draw_landmarks(
+            thresh_with_landmarks,
+            hand_landmarks,
+            self.mp_hands.HAND_CONNECTIONS,
+            landmark_drawing_spec=self.mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=2, circle_radius=2),
+            connection_drawing_spec=self.mp_drawing.DrawingSpec(color=(0, 0, 255), thickness=2)
+        )
+        
+        return thresh_with_landmarks
