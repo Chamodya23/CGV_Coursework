@@ -1,4 +1,4 @@
-# Hand Gesture RPS Game 👋🎮
+# Hand Gesture RPS Game ✊✋✌️
 _hand-gesture-rps_ is an interactive computer vision application that allows you to play Rock-Paper-Scissors against your computer using real hand gestures. Powered by MediaPipe and OpenCV, this game recognizes your hand gestures in real-time through your webcam, determines your move, and competes against a randomized computer opponent.
 
 ✨ Features
@@ -28,14 +28,14 @@ _hand-gesture-rps_ is an interactive computer vision application that allows you
 
 🚀 Installation
 
-1. Clone the Repository
-git clone https://github.com/Chamodya23/CGV_Coursework.git
+1. Clone the Repository<br>
+`git clone https://github.com/Chamodya23/CGV_Coursework.git`
 
-2. Create a Virtual Environment
-python -m venv venv
+2. Create a Virtual Environment<br>
+`python -m venv venv`
 
-3. Install Dependencies
-   pip install -r requirements.txt
+3. Install Dependencies<br>
+   `pip install -r requirements.txt`
 
 4. Prepare Image Assets
    * Create an _images_ folder in the project directory
@@ -45,16 +45,16 @@ python -m venv venv
 🎮 How to Play
 
 1. Start the Game
-* bashpython rps.py
+ `python rps.py`
 
 2. Controls
 
-* SPACE: Start a new round
-* e: Toggle extended mode (Rock-Paper-Scissors-Lizard-Spock)
-* t: Toggle threshold visualization
-* +/-: Adjust threshold values
-* s: Take a screenshot
-* ESC: Quit the game
+* `SPACE`: Start a new round
+* `e`: Toggle extended mode (Rock-Paper-Scissors-Lizard-Spock)
+* `t`: Toggle threshold visualization
+* `+/-`: Adjust threshold values
+* `s`: Take a screenshot
+* `ESC`: Quit the game
 
 3. Gameplay
 
