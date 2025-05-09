@@ -1,10 +1,20 @@
-Rock-Paper-Scissors Computer Vision Game
-This is a computer vision-based Rock-Paper-Scissors game where you can play against your computer using hand gestures captured by your webcam.
+# Hand Gesture RPS Game 👋🎮
+_hand-gesture-rps_ is an interactive computer vision application that allows you to play Rock-Paper-Scissors against your computer using real hand gestures. Powered by MediaPipe and OpenCV, this game recognizes your hand gestures in real-time through your webcam, determines your move, and competes against a randomized computer opponent.
+✨ Features
 
-Features
-Detect hand gestures using your webcam
-Play classic Rock-Paper-Scissors
-Extended mode: Rock-Paper-Scissors-Lizard-Spock
-View image processing steps in real-time
-Track game statistics
-Take screenshots of gameplay
+Real-time hand gesture recognition using MediaPipe's hand tracking
+Visual processing pipeline with threshold adjustment and visualization options
+Classic RPS gameplay with intuitive controls
+Extended mode supporting Rock-Paper-Scissors-Lizard-Spock for added complexity
+Interactive countdown system with clear game state transitions
+Performance statistics tracking wins, losses, and ties
+Screenshot capability to capture memorable moments
+Customizable threshold settings for different lighting conditions
+
+🔧 **Technologies**
+
+Python (3.8+)
+OpenCV (4.11.0+) for image processing and UI
+MediaPipe for hand landmark detection
+NumPy for numerical operations
+Random for computer move generation
